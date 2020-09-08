@@ -1,0 +1,2 @@
+# Run data exporter every hour
+0 * * * * pirate /usr/local/bin/docker-compose -f ${BBOX_PATH}/docker-compose.yml up data-exporter

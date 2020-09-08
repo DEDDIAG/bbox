@@ -1,0 +1,22 @@
+[Unit]
+Description=bbox service
+After=docker.service
+BindsTo=docker.service
+Conflicts=shutdown.target reboot.target halt.target
+Type=oneshot
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=30
+RemainAfterExit=yes
+Restart=always
+RestartSec=10
+EnvironmentFile=/etc/environment
+WorkingDirectory=/opt/bbox
+ExecStart=/usr/local/bin/docker-compose up -d
+ExecStop=/usr/local/bin/docker-compose stop
+
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target

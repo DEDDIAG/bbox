@@ -1,0 +1,11 @@
+
+items:
+    power:
+        type: tag
+        strategies:
+            - everyChange
+            - everyHour
+
+strategies:
+    everyHour:
+        cron: "0 0 * * * ?"

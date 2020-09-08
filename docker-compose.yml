@@ -1,0 +1,76 @@
+version: '2'
+services:
+  smartenergy:
+    image: deddiag/smartenergy:latest-arm32v7
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./addons/:/opt/smartenergy/addons
+      - ./conf/jdbc.ypersist:/opt/smartenergy/conf/persistence/jdbc.ypersist
+      - ./conf/jdbc.cfg:/opt/smartenergy/conf/services/jdbc.cfg
+      - smartenergy-data:/opt/smartenergy/userdata/jsondb/
+    network_mode: "host"
+    restart: on-failure
+    devices:
+      - "/dev/ttyS0:/dev/ttyS0"
+      - "/dev/gpiomem:/dev/mem"
+    environment:
+      - WIRINGPI_GPIOMEM=1
+    cap_add:
+      - SYS_RAWIO
+    privileged: true
+    tmpfs: /run/lock
+
+  data-exporter:
+    image: deddiag/smartenergy-data-exporter:latest-arm32v7
+    environment:
+      - HOUSE=${HOUSE}
+      - REMOTE_HOST=${REMOTE_HOST}
+      - DATA_DIR=/var/lib/postgresql/
+      - POSTGRES_ENV_POSTGRES_PASSWORD=password
+      - POSTGRES_PORT_5432_TCP_ADDR=postgres
+    volumes:
+      - ${HOME}/.ssh:/var/lib/postgresql/.ssh
+      - postgres-export:/var/lib/postgresql/
+    links:
+      - postgres:postgres
+    networks:
+        lvsbr:
+          ipv4_address: 172.20.0.5
+
+  postgres:
+    image: arm32v7/postgres:9.6-alpine
+    environment:
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - ./postgres/initdb.d/10_item_index.sql:/docker-entrypoint-initdb.d/10_item_index.sql
+    restart: on-failure
+    networks:
+        lvsbr:
+          ipv4_address: 172.20.0.2
+
+  nginx:
+    image: arm32v7/nginx:1.19-alpine
+    environment:
+      - NGINX_NO_UPDATE=""
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+    restart: on-failure
+    networks:
+        lvsbr:
+          ipv4_address: 172.20.0.4
+
+networks:    
+  lvsbr:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.20.0.0/24
+         gateway: 172.20.0.1
+
+
+volumes:
+  smartenergy-data:
+  postgres-export:
