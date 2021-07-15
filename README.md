@@ -118,6 +118,22 @@ The ABB smartmeter need to have the following settings:
 ## Access WebUI
 Go to ```http://<IP>``` to access the Web UI.
 
+## Citation
+When using the system in academic work please cite [this paper](https://doi.org/10.1038/s41597-021-00963-2) as the reference.
+```
+@article{DEDDIAG_2021,
+  author = {Marc Wenninger and Andreas Maier and Jochen Schmidt},
+  title = {{DEDDIAG}, a domestic electricity demand dataset of individual appliances in Germany},
+  year = {2021},
+  month = jul,
+  volume = {8},
+  number = {1},
+  journal = {Scientific Data},
+  doi = {https://doi.org/10.1038/s41597-021-00963-2},
+  url = {https://rdcu.be/coGqL},
+}
+```
+
 ## Acknowledgements
 The monitoring system and dataset were created as part of a research project of the [Technical University of Applied Sciences Rosenheim](https://www.th-rosenheim.de/).
 
